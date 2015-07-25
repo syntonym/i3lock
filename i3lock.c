@@ -796,6 +796,7 @@ int main(int argc, char *argv[]) {
         errx(EXIT_FAILURE, "pw->pw_name is NULL.\n");
 
     char *optstring = "hvnbdc:p:ui:teI:f";
+    image_path = "/usr/share/i3lock/background.png";
     while ((o = getopt_long(argc, argv, optstring, longopts, &optind)) != -1) {
         switch (o) {
             case 'v':

@@ -140,7 +140,6 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
         cairo_fill(xcb_ctx);
     }
 
-    if (unlock_state >= STATE_KEY_PRESSED && unlock_indicator) {
         cairo_scale(ctx, scaling_factor(), scaling_factor());
         /* Draw a (centered) circle with transparent background. */
         cairo_set_line_width(ctx, 10.0);
@@ -151,44 +150,36 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
                   0 /* start */,
                   2 * M_PI /* end */);
 
-        /* Use the appropriate color for the different PAM states
-         * (currently verifying, wrong password, or default) */
-        switch (pam_state) {
-            case STATE_PAM_VERIFY:
-                cairo_set_source_rgba(ctx, 0, 114.0 / 255, 255.0 / 255, 0.75);
-                break;
-            case STATE_PAM_WRONG:
-                cairo_set_source_rgba(ctx, 250.0 / 255, 0, 0, 0.75);
-                break;
-            default:
-                cairo_set_source_rgba(ctx, 0, 0, 0, 0.75);
-                break;
-        }
-        cairo_fill_preserve(ctx);
 
         switch (pam_state) {
             case STATE_PAM_VERIFY:
-                cairo_set_source_rgb(ctx, 51.0 / 255, 0, 250.0 / 255);
+                //solarized magenta 211 54 130
+                cairo_set_source_rgb(ctx, 211.0 / 255, 54.0 /255, 130.0 / 255);
                 break;
             case STATE_PAM_WRONG:
-                cairo_set_source_rgb(ctx, 125.0 / 255, 51.0 / 255, 0);
+                //solarized red: 220 50 47
+                cairo_set_source_rgb(ctx, 220.0 / 255, 50.0 / 255, 47.0 / 255);
                 break;
             case STATE_PAM_IDLE:
-                cairo_set_source_rgb(ctx, 51.0 / 255, 125.0 / 255, 0);
+                //solarized base 01
+                cairo_set_source_rgb(ctx, 88.0 / 255, 110.0 / 255, 117.0 / 255);
                 break;
         }
         cairo_stroke(ctx);
+        
 
         /* Draw an inner seperator line. */
+        /*
         cairo_set_source_rgb(ctx, 0, 0, 0);
         cairo_set_line_width(ctx, 2.0);
         cairo_arc(ctx,
-                  BUTTON_CENTER /* x */,
-                  BUTTON_CENTER /* y */,
-                  BUTTON_RADIUS - 5 /* radius */,
+                  BUTTON_CENTER ,
+                  BUTTON_CENTER ,
+                  BUTTON_RADIUS - 5 ,
                   0,
                   2 * M_PI);
         cairo_stroke(ctx);
+        */
 
         cairo_set_line_width(ctx, 10.0);
 
@@ -233,6 +224,7 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
             cairo_close_path(ctx);
         }
 
+        /*
         if (pam_state == STATE_PAM_WRONG && (modifier_string != NULL)) {
             cairo_text_extents_t extents;
             double x, y;
@@ -247,6 +239,7 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
             cairo_show_text(ctx, modifier_string);
             cairo_close_path(ctx);
         }
+        */
 
         /* After the user pressed any valid key or the backspace key, we
          * highlight a random part of the unlock indicator to confirm this
@@ -263,15 +256,19 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
                       highlight_start + (M_PI / 3.0));
             if (unlock_state == STATE_KEY_ACTIVE) {
                 /* For normal keys, we use a lighter green. */
-                cairo_set_source_rgb(ctx, 51.0 / 255, 219.0 / 255, 0);
+                //solarized blue
+                //solarized magenta  211  54 130
+                cairo_set_source_rgb(ctx, 211.0 / 255, 54.0 / 255, 130.0 / 255);
             } else {
                 /* For backspace, we use red. */
-                cairo_set_source_rgb(ctx, 219.0 / 255, 51.0 / 255, 0);
+                //solarized red
+                cairo_set_source_rgb(ctx, 220.0 / 255 , 50.0 / 255 , 47.0 / 255);
             }
             cairo_stroke(ctx);
 
             /* Draw two little separators for the highlighted part of the
              * unlock indicator. */
+            if (0) {
             cairo_set_source_rgb(ctx, 0, 0, 0);
             cairo_arc(ctx,
                       BUTTON_CENTER /* x */,
@@ -287,8 +284,9 @@ xcb_pixmap_t draw_image(uint32_t *resolution) {
                       highlight_start + (M_PI / 3.0) /* start */,
                       (highlight_start + (M_PI / 3.0)) + (M_PI / 128.0) /* end */);
             cairo_stroke(ctx);
+            }
         }
-    }
+    
 
     if (xr_screens > 0) {
         /* Composite the unlock indicator in the middle of each screen. */
